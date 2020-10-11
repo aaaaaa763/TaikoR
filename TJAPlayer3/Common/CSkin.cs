@@ -2437,14 +2437,14 @@ namespace TJAPlayer3
         public Color SongSelect_ForeColor_Classic = ColorTranslator.FromHtml("#FFFFFF");
         public Color SongSelect_ForeColor_GameMusic = ColorTranslator.FromHtml("#FFFFFF");
         public Color SongSelect_ForeColor_Namco = ColorTranslator.FromHtml("#FFFFFF");
-        public Color SongSelect_BackColor_JPOP = ColorTranslator.FromHtml("#01455B");
-        public Color SongSelect_BackColor_Anime = ColorTranslator.FromHtml("#9D3800");
-        public Color SongSelect_BackColor_VOCALOID = ColorTranslator.FromHtml("#5B6278");
-        public Color SongSelect_BackColor_Children = ColorTranslator.FromHtml("#99001F");
-        public Color SongSelect_BackColor_Variety = ColorTranslator.FromHtml("#366600");
-        public Color SongSelect_BackColor_Classic = ColorTranslator.FromHtml("#875600");
-        public Color SongSelect_BackColor_GameMusic = ColorTranslator.FromHtml("#412080");
-        public Color SongSelect_BackColor_Namco = ColorTranslator.FromHtml("#980E00");
+        public Color SongSelect_BackColor_JPOP = ColorTranslator.FromHtml("#134F4A");
+        public Color SongSelect_BackColor_Anime = ColorTranslator.FromHtml("#853412");
+        public Color SongSelect_BackColor_VOCALOID = ColorTranslator.FromHtml("#262A30");
+        public Color SongSelect_BackColor_Children = ColorTranslator.FromHtml("#74064B");
+        public Color SongSelect_BackColor_Variety = ColorTranslator.FromHtml("#3A3304");
+        public Color SongSelect_BackColor_Classic = ColorTranslator.FromHtml("#5F4531");
+        public Color SongSelect_BackColor_GameMusic = ColorTranslator.FromHtml("#491270");
+        public Color SongSelect_BackColor_Namco = ColorTranslator.FromHtml("#901104");
 
         public Color SongSelect_ForeColor = ColorTranslator.FromHtml("#FFFFFF");              //ジャンルなしの時の色
         public Color SongSelect_BackColor = ColorTranslator.FromHtml("#000000");              //ジャンルなしの時の色
