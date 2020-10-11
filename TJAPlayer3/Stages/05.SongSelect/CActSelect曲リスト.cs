@@ -522,8 +522,8 @@ namespace TJAPlayer3
 
             var fontFamily = FontUtilities.GetFontFamilyOrFallback(TJAPlayer3.ConfigIni.FontName);
 
-            this.pfMusicName = new CPrivateFastFont(fontFamily, 28);
-            this.pfSubtitle = new CPrivateFastFont(fontFamily, 20);
+            this.pfMusicName = new CPrivateFastFont(fontFamily, 20);
+            this.pfSubtitle = new CPrivateFastFont(fontFamily, 15);
 
             _titleTextures.ItemRemoved += OnTitleTexturesOnItemRemoved;
 		    _titleTextures.ItemUpdated += OnTitleTexturesOnItemUpdated;
@@ -812,7 +812,7 @@ namespace TJAPlayer3
 				if( n現在時刻 < this.nスクロールタイマ )	// 念のため
 					this.nスクロールタイマ = n現在時刻;
 
-				const int nアニメ間隔 = 2;
+				const int nアニメ間隔 = 3;
 				while( ( n現在時刻 - this.nスクロールタイマ ) >= nアニメ間隔 )
 				{
 					int n加速度 = 1;
@@ -1222,12 +1222,17 @@ namespace TJAPlayer3
 							#region [ バーテクスチャの描画。]
 							//-----------------
 							int width = (int) ( ( (double) ( ( 640 - this.ptバーの基本座標[ i ].X ) + 1 ) ) / Math.Sin( Math.PI * 3 / 5 ) );
-                            int x = i選曲バーX座標 + 500 - ( (int) ( db割合0to1 * 500 ) );
-							int y = this.ptバーの基本座標[ i ].Y;
-                            this.tジャンル別選択されていない曲バーの描画( this.ptバーの座標[ nパネル番号 ].X, TJAPlayer3.Skin.SongSelect_Overall_Y, this.stバー情報[ nパネル番号 ].strジャンル );
-                            if( this.stバー情報[ nパネル番号 ].b分岐[ TJAPlayer3.stage選曲.n現在選択中の曲の難易度 ] == true && i != 5 )
-                                TJAPlayer3.Tx.SongSelect_Branch.t2D描画( TJAPlayer3.app.Device, this.ptバーの座標[ nパネル番号 ].X + 66, TJAPlayer3.Skin.SongSelect_Overall_Y-5);
-                            if( this.stバー情報[ nパネル番号 ].ar難易度 != null )
+							int n見た目の行番号 = i;
+							int n次のパネル番号 = (this.n現在のスクロールカウンタ <= 0) ? ((i + 1) % 13) : (((i - 1) + 13) % 13);
+							int xAnime = this.ptバーの座標[n見た目の行番号].X + ((int)((this.ptバーの座標[n次のパネル番号].X - this.ptバーの座標[n見た目の行番号].X) * (((double)Math.Abs(this.n現在のスクロールカウンタ)) / 100.0)));
+							int yAnime = this.ptバーの座標[n見た目の行番号].Y + ((int)((this.ptバーの座標[n次のパネル番号].Y - this.ptバーの座標[n見た目の行番号].Y) * (((double)Math.Abs(this.n現在のスクロールカウンタ)) / 100.0)));
+							
+							if (n現在のスクロールカウンタ != 0)
+								this.tジャンル別選択されていない曲バーの描画(xAnime, yAnime, this.stバー情報[nパネル番号].strジャンル);
+							else if (n見た目の行番号 != 5)
+								this.tジャンル別選択されていない曲バーの描画(xAnime, yAnime, this.stバー情報[nパネル番号].strジャンル);
+
+							if ( this.stバー情報[ nパネル番号 ].ar難易度 != null )
                             {
                                 int nX補正 = 0;
                                 if( this.stバー情報[ nパネル番号 ].ar難易度[ TJAPlayer3.stage選曲.n現在選択中の曲の難易度 ].ToString().Length == 2 )
@@ -1237,11 +1242,13 @@ namespace TJAPlayer3
 							//-----------------
 							#endregion
 							#region [ タイトル名テクスチャを描画。]
-                            if( this.stバー情報[ nパネル番号 ].ttkタイトル != null )
-                                ResolveTitleTexture(this.stバー情報[ nパネル番号 ].ttkタイトル).t2D描画( TJAPlayer3.app.Device, this.ptバーの座標[ i ].X + 28, TJAPlayer3.Skin.SongSelect_Overall_Y+23);
+							if (n現在のスクロールカウンタ != 0)
+								ResolveTitleTexture(this.stバー情報[nパネル番号].ttkタイトル).t2D拡大率考慮中央基準描画(TJAPlayer3.app.Device, xAnime + 309, yAnime + 58);
+							else if (n見た目の行番号 != 5)
+								ResolveTitleTexture(this.stバー情報[nパネル番号].ttkタイトル).t2D拡大率考慮中央基準描画(TJAPlayer3.app.Device, xAnime + 309, yAnime + 58);
 							#endregion
 
-						    if (i != 5)
+							if (i != 5)
 						    {
                                 DrawRatingForUnselectedSong(nパネル番号, this.ptバーの座標[ nパネル番号 ].X);
 						    }
@@ -1266,32 +1273,30 @@ namespace TJAPlayer3
 					int n次のパネル番号 = ( this.n現在のスクロールカウンタ <= 0 ) ? ( ( i + 1 ) % 13 ) : ( ( ( i - 1 ) + 13 ) % 13 );
                     int x = i選曲バーX座標;
                     int xAnime = this.ptバーの座標[ n見た目の行番号 ].X + ( (int) ( ( this.ptバーの座標[ n次のパネル番号 ].X - this.ptバーの座標[ n見た目の行番号 ].X ) * ( ( (double) Math.Abs( this.n現在のスクロールカウンタ ) ) / 100.0 ) ) );
-					int y = this.ptバーの基本座標[ n見た目の行番号 ].Y + ( (int) ( ( this.ptバーの基本座標[ n次のパネル番号 ].Y - this.ptバーの基本座標[ n見た目の行番号 ].Y ) * ( ( (double) Math.Abs( this.n現在のスクロールカウンタ ) ) / 100.0 ) ) );
+					int yAnime = this.ptバーの座標[ n見た目の行番号 ].Y + ( (int) ( ( this.ptバーの座標[ n次のパネル番号 ].Y - this.ptバーの座標[ n見た目の行番号 ].Y ) * ( ( (double) Math.Abs( this.n現在のスクロールカウンタ ) ) / 100.0 ) ) );
 		
 					{
-                        // (B) スクロール中の選択曲バー、またはその他のバーの描画。
-                        
-                        #region [ バーテクスチャを描画。]
-                        //-----------------
-                        if (n現在のスクロールカウンタ != 0)
-                            this.tジャンル別選択されていない曲バーの描画( xAnime, TJAPlayer3.Skin.SongSelect_Overall_Y, this.stバー情報[ nパネル番号 ].strジャンル );
-                        else if (n見た目の行番号 != 5)
-                            this.tジャンル別選択されていない曲バーの描画(xAnime, TJAPlayer3.Skin.SongSelect_Overall_Y, this.stバー情報[nパネル番号].strジャンル);
-                        if (this.stバー情報[nパネル番号].b分岐[TJAPlayer3.stage選曲.n現在選択中の曲の難易度] == true && n見た目の行番号 != 5)
-                            TJAPlayer3.Tx.SongSelect_Branch.t2D描画(TJAPlayer3.app.Device, xAnime + 66, TJAPlayer3.Skin.SongSelect_Overall_Y - 5);
-                        //-----------------
-                        #endregion
+						// (B) スクロール中の選択曲バー、またはその他のバーの描画。
 
-                        #region [ タイトル名テクスチャを描画。]
+						#region [ バーテクスチャを描画。]
+						//-----------------
+						if (n現在のスクロールカウンタ != 0)
+							this.tジャンル別選択されていない曲バーの描画(xAnime, yAnime, this.stバー情報[nパネル番号].strジャンル);
+						else if (n見た目の行番号 != 5)
+							this.tジャンル別選択されていない曲バーの描画(xAnime, yAnime, this.stバー情報[nパネル番号].strジャンル);
+						//-----------------
+						#endregion
 
-                        if (n現在のスクロールカウンタ != 0)
-                            ResolveTitleTexture(this.stバー情報[ nパネル番号 ].ttkタイトル).t2D描画( TJAPlayer3.app.Device, xAnime + 28, TJAPlayer3.Skin.SongSelect_Overall_Y+23);
-                        else if (n見た目の行番号 != 5)
-                            ResolveTitleTexture(this.stバー情報[nパネル番号].ttkタイトル).t2D描画(TJAPlayer3.app.Device, xAnime + 28, TJAPlayer3.Skin.SongSelect_Overall_Y + 23);
-                        
-                        #endregion
-                        
-                        if( this.stバー情報[ nパネル番号 ].ar難易度 != null )
+						#region [ タイトル名テクスチャを描画。]
+
+						if (n現在のスクロールカウンタ != 0)
+							ResolveTitleTexture(this.stバー情報[nパネル番号].ttkタイトル).t2D拡大率考慮中央基準描画(TJAPlayer3.app.Device, xAnime + 309, yAnime + 58);
+						else if (n見た目の行番号 != 5)
+							ResolveTitleTexture(this.stバー情報[nパネル番号].ttkタイトル).t2D拡大率考慮中央基準描画(TJAPlayer3.app.Device, xAnime + 309, yAnime + 58);
+
+						#endregion
+
+						if ( this.stバー情報[ nパネル番号 ].ar難易度 != null )
                         {
                             int nX補正 = 0;
                             if( this.stバー情報[ nパネル番号 ].ar難易度[ TJAPlayer3.stage選曲.n現在選択中の曲の難易度 ].ToString().Length == 2 )
@@ -1673,12 +1678,13 @@ namespace TJAPlayer3
 		private int n現在の選択行;
 		private int n目標のスクロールカウンタ;
         private readonly Point[] ptバーの基本座標 = new Point[] { new Point( 0x2c4, 5 ), new Point( 0x272, 56 ), new Point( 0x242, 107 ), new Point( 0x222, 158 ), new Point( 0x210, 209 ), new Point( 0x1d0, 270 ), new Point( 0x224, 362 ), new Point( 0x242, 413 ), new Point( 0x270, 464 ), new Point( 0x2ae, 515 ), new Point( 0x314, 566 ), new Point( 0x3e4, 617 ), new Point( 0x500, 668 ) };
-        private Point[] ptバーの座標 = new Point[]
-        { new Point( -60, 180 ), new Point( 40, 180 ), new Point( 140, 180 ), new Point( 241, 180 ), new Point( 341, 180 ),
-          new Point( 590, 180 ),
-          new Point( 840, 180 ), new Point( 941, 180 ), new Point( 1041, 180 ), new Point( 1142, 180 ), new Point( 1242, 180 ), new Point( 1343, 180 ), new Point( 1443, 180 ) };
+		private Point[] ptバーの座標 = new Point[]
+		{ new Point( 187, -213 ), new Point( 214, -123 ), new Point( 241, -33 ), new Point( 268, 57 ), new Point( 295, 147 ),
+		  new Point( 328, 317 ),
+		  new Point( 361, 487 ), new Point( 388, 577 ), new Point( 415, 667 ), new Point( 442, 757 ), new Point( 469, 847 ), new Point( 496, 937 ), new Point( 523, 1027 ) };
 
-        private STバー情報[] stバー情報 = new STバー情報[ 13 ];
+
+		private STバー情報[] stバー情報 = new STバー情報[ 13 ];
 		private CTexture txSongNotFound, txEnumeratingSongs;
 		//private CTexture txスキル数字;
 		//private CTexture txアイテム数数字;
@@ -1820,11 +1826,12 @@ namespace TJAPlayer3
 
             var barGenreIndex = CStrジャンルtoNum.ForBarGenreIndex( strジャンル );
 		    TJAPlayer3.Tx.SongSelect_Bar_Genre[barGenreIndex]?.t2D描画( TJAPlayer3.app.Device, x, y );
+			TJAPlayer3.Tx.SongSelect_Bar_white.t2D描画(TJAPlayer3.app.Device, x, y);
 		}
 
         private TitleTextureKey ttk曲名テクスチャを生成する( string str文字, Color forecolor, Color backcolor)
         {
-            return new TitleTextureKey(str文字, pfMusicName, forecolor, backcolor, 410);
+            return new TitleTextureKey(str文字, pfMusicName, forecolor, backcolor, 500);
         }
 
 	    private TitleTextureKey ttkサブタイトルテクスチャを生成する( string str文字 )
@@ -1843,22 +1850,23 @@ namespace TJAPlayer3
 	        return texture;
 	    }
 
-	    private static CTexture GenerateTitleTexture(TitleTextureKey titleTextureKey)
-	    {
-	        using (var bmp = new Bitmap(titleTextureKey.cPrivateFastFont.DrawPrivateFont(
-	            titleTextureKey.str文字, titleTextureKey.forecolor, titleTextureKey.backcolor, true)))
-	        {
-	            CTexture tx文字テクスチャ = TJAPlayer3.tテクスチャの生成(bmp, false);
-	            if (tx文字テクスチャ.szテクスチャサイズ.Height > titleTextureKey.maxHeight)
-	            {
-	                tx文字テクスチャ.vc拡大縮小倍率.Y = (float) (((double) titleTextureKey.maxHeight) / tx文字テクスチャ.szテクスチャサイズ.Height);
-	            }
+		private static CTexture GenerateTitleTexture(TitleTextureKey titleTextureKey)
+		{
+			using (var bmp = new Bitmap(titleTextureKey.cPrivateFastFont.DrawPrivateFont(
+				titleTextureKey.str文字, titleTextureKey.forecolor, titleTextureKey.backcolor)))
+			{
+				CTexture tx文字テクスチャ = TJAPlayer3.tテクスチャの生成(bmp, false);
+				if (tx文字テクスチャ.szテクスチャサイズ.Width > titleTextureKey.maxHeight)
+				{
+					tx文字テクスチャ.vc拡大縮小倍率.X = (float)(((double)titleTextureKey.maxHeight) / tx文字テクスチャ.szテクスチャサイズ.Width);
+				}
 
-	            return tx文字テクスチャ;
-	        }
-	    }
+				return tx文字テクスチャ;
+			}
+		}
 
-	    private static void OnTitleTexturesOnItemUpdated(
+
+		private static void OnTitleTexturesOnItemUpdated(
 	        KeyValuePair<TitleTextureKey, CTexture> previous, KeyValuePair<TitleTextureKey, CTexture> next)
 	    {
             previous.Value.Dispose();
