@@ -1,4 +1,4 @@
 # TaikoR
-TJAP3を改造して虹風にするリポジトリです
+TJAP3を改造してhoukehuにするリポジトリです
 基本マイペース
 desu
