@@ -1,4 +1,5 @@
 ﻿using FDK;
+using System.Drawing;
 
 namespace TJAPlayer3
 {
@@ -10,36 +11,36 @@ namespace TJAPlayer3
 		{
 			this.mode = EFIFOモード.フェードアウト;
 
-            this.counter = new CCounter( 0, 1500, 1, TJAPlayer3.Timer );
+			this.counter = new CCounter(0, 100, 5, TJAPlayer3.Timer);
 		}
 		public void tフェードイン開始()
 		{
 			this.mode = EFIFOモード.フェードイン;
-			this.counter = new CCounter( 0, 1500, 1, TJAPlayer3.Timer );
+			this.counter = new CCounter(0, 100, 5, TJAPlayer3.Timer);
 		}
 
 		// CActivity 実装
 
 		public override void On非活性化()
 		{
-			if( !base.b活性化してない )
+			if (!base.b活性化してない)
 			{
-                //CDTXMania.tテクスチャの解放( ref this.tx幕 );
+				//CDTXMania.tテクスチャの解放( ref this.tx幕 );
 				base.On非活性化();
 			}
 		}
 		public override void OnManagedリソースの作成()
 		{
-			if( !base.b活性化してない )
+			if (!base.b活性化してない)
 			{
 				//this.tx幕 = CDTXMania.tテクスチャの生成( CSkin.Path( @"Graphics\6_FO.png" ) );
- 			//	this.tx幕2 = CDTXMania.tテクスチャの生成( CSkin.Path( @"Graphics\6_FI.png" ) );
+				//	this.tx幕2 = CDTXMania.tテクスチャの生成( CSkin.Path( @"Graphics\6_FI.png" ) );
 				base.OnManagedリソースの作成();
 			}
 		}
 		public override int On進行描画()
 		{
-			if( base.b活性化してない || ( this.counter == null ) )
+			if (base.b活性化してない || (this.counter == null))
 			{
 				return 0;
 			}
@@ -47,38 +48,42 @@ namespace TJAPlayer3
 
 			// Size clientSize = CDTXMania.app.Window.ClientSize;	// #23510 2010.10.31 yyagi: delete as of no one use this any longer.
 
-            if( this.mode == EFIFOモード.フェードアウト )
-            {
-                if( TJAPlayer3.Tx.SongLoading_FadeOut != null )
-			    {
-                    int y = this.counter.n現在の値 >= 840 ? 840 : this.counter.n現在の値;
-                    TJAPlayer3.Tx.SongLoading_FadeOut.t2D描画( TJAPlayer3.app.Device, 0, 720 - y );
-                }
+			if (this.mode == EFIFOモード.フェードアウト)
+			{
+				if (TJAPlayer3.Tx.SongLoading_FadeOut != null)
+				{
+					TJAPlayer3.Tx.SongLoading_FadeOut.vc拡大縮小倍率.X = this.counter.n現在の値 / 100f;
+					TJAPlayer3.Tx.SongLoading_FadeOut.t2D描画(TJAPlayer3.app.Device, 0, 0, new Rectangle(0, 0, 640, 720));
+					TJAPlayer3.Tx.SongLoading_FadeOut.t2D描画(TJAPlayer3.app.Device, (int)(1280 - this.counter.n現在の値 * 6.4), 0, new Rectangle(640, 0, 640, 720));
+				}
 
 			}
-            else
-            {
-                if(TJAPlayer3.Tx.SongLoading_FadeIn != null )
-                {
-                    int y = this.counter.n現在の値 >= 840 ? 840 : this.counter.n現在の値;
-                    TJAPlayer3.Tx.SongLoading_FadeIn.t2D描画( TJAPlayer3.app.Device, 0, 0 - y );
-                }
-            }
+			else
+			{
+				if (TJAPlayer3.Tx.SongLoading_FadeOut != null)
+				{
+					TJAPlayer3.Tx.SongLoading_FadeOut.vc拡大縮小倍率.X = 1 - this.counter.n現在の値 / 100f;
+					TJAPlayer3.Tx.SongLoading_FadeOut.t2D描画(TJAPlayer3.app.Device, 0, 0, new Rectangle(0, 0, 640, 720));
+					TJAPlayer3.Tx.SongLoading_FadeOut.t2D描画(TJAPlayer3.app.Device, (int)(640 + this.counter.n現在の値 * 6.4), 0, new Rectangle(640, 0, 640, 720));
+					TJAPlayer3.Tx.SongLoading_FadeIn.Opacity = 255 - (int)(this.counter.n現在の値 * 2.55);
+					TJAPlayer3.Tx.SongLoading_FadeIn.t2D描画(TJAPlayer3.app.Device, 0, 0 - this.counter.n現在の値 * 3);
+				}
+			}
 
-            if( this.mode == EFIFOモード.フェードアウト )
-            {
-			    if( this.counter.n現在の値 != 1500 )
-			    {
-				    return 0;
-			    }
-            }
-            else if( this.mode == EFIFOモード.フェードイン )
-            {
-			    if( this.counter.n現在の値 != 1500 )
-			    {
-				    return 0;
-			    }
-            }
+			if (this.mode == EFIFOモード.フェードアウト)
+			{
+				if (this.counter.n現在の値 != 100)
+				{
+					return 0;
+				}
+			}
+			else if (this.mode == EFIFOモード.フェードイン)
+			{
+				if (this.counter.n現在の値 != 100)
+				{
+					return 0;
+				}
+			}
 			return 1;
 		}
 
@@ -88,10 +93,10 @@ namespace TJAPlayer3
 		#region [ private ]
 		//-----------------
 		private CCounter counter;
-        private CCounter ct待機;
+		private CCounter ct待機;
 		private EFIFOモード mode;
-        //private CTexture tx幕;
-        //private CTexture tx幕2;
+		//private CTexture tx幕;
+		//private CTexture tx幕2;
 		//-----------------
 		#endregion
 	}

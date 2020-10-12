@@ -2363,34 +2363,34 @@ namespace TJAPlayer3
 
         //リザルト画面
         //現在のデフォルト値はダミーです。
-        public int nResultPanelP1X = 515;
-        public int nResultPanelP1Y = 75;
+        public int nResultPanelP1X = 0;
+        public int nResultPanelP1Y = 0;
         public int nResultPanelP2X = 515;
         public int nResultPanelP2Y = 75;
-        public int nResultScoreP1X = 582;
-        public int nResultScoreP1Y = 252;
+        public int nResultScoreP1X = 65;
+        public int nResultScoreP1Y = 213;
         public int nResultJudge1_P1X = 815;
         public int nResultJudge1_P1Y = 182;
         public int nResultJudge2_P1X = 968;
         public int nResultJudge2_P1Y = 174;
-        public int nResultGreatP1X = 875;
-        public int nResultGreatP1Y = 188;
+        public int nResultGreatP1X = 487;
+        public int nResultGreatP1Y = 190;
         public int nResultGreatP2X = 875;
         public int nResultGreatP2Y = 188;
-        public int nResultGoodP1X = 875;
-        public int nResultGoodP1Y = 226;
+        public int nResultGoodP1X = 487;
+        public int nResultGoodP1Y = 230;
         public int nResultGoodP2X = 875;
         public int nResultGoodP2Y = 226;
-        public int nResultBadP1X = 875;
-        public int nResultBadP1Y = 266;
+        public int nResultBadP1X = 487;
+        public int nResultBadP1Y = 271;
         public int nResultBadP2X = 875;
         public int nResultBadP2Y = 266;
-        public int nResultComboP1X = 1144;
-        public int nResultComboP1Y = 188;
+        public int nResultComboP1X = 487;
+        public int nResultComboP1Y = 354;
         public int nResultComboP2X = 1144;
         public int nResultComboP2Y = 188;
-        public int nResultRollP1X = 1144;
-        public int nResultRollP1Y = 226;
+        public int nResultRollP1X = 487;
+        public int nResultRollP1Y = 313;
         public int nResultRollP2X = 1144;
         public int nResultRollP2Y = 226;
         public int nResultGaugeBaseP1X = 555;
@@ -2466,9 +2466,9 @@ namespace TJAPlayer3
         public int SongSelect_Rating_Increment_Y = 13;
         #endregion
         #region SongLoading
-        public int[] SongLoading_Plate_XY = new int[] { 640, 360 };
-        public int[] SongLoading_Title_XY = new int[] { 640, 340 };
-        public int[] SongLoading_SubTitle_XY = new int[] { 640, 390 };
+        public int[] SongLoading_Plate_XY = new int[] { 640, 254 };
+        public int[] SongLoading_Title_XY = new int[] { 640, 260 };
+        public int[] SongLoading_SubTitle_XY = new int[] { 640, 300 };
         public int SongLoading_Title_FontSize = 30;
         public int SongLoading_SubTitle_FontSize = 22;
         public ReferencePoint SongLoading_Plate_ReferencePoint = ReferencePoint.Center;
@@ -2565,8 +2565,8 @@ namespace TJAPlayer3
         public int[] Game_Taiko_Background_Y = new int[] { 184, 360 };
         public int[] Game_Taiko_Frame_X = new int[] { 329, 329 };
         public int[] Game_Taiko_Frame_Y = new int[] { 136, 360 };
-        public int[] Game_Taiko_NamePlate_X = new int[] { 0, 0 };
-        public int[] Game_Taiko_NamePlate_Y = new int[] { 288, 368 };
+        public int[] Game_Taiko_NamePlate_X = new int[] { -1, -1 };
+        public int[] Game_Taiko_NamePlate_Y = new int[] { 294, 368 };
         public int[] Game_Taiko_PlayerNumber_X = new int[] { 4, 4 };
         public int[] Game_Taiko_PlayerNumber_Y = new int[] { 233, 435 };
         public int[] Game_Taiko_X = new int[] { 190, 190 };
