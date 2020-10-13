@@ -59,6 +59,7 @@ namespace TJAPlayer3
 
             this.ct上背景FIFOタイマー = new CCounter();
             base.OnManagedリソースの作成();
+            bg = rnd.Next(0, 3);
         }
 
         public override int On進行描画()
@@ -119,9 +120,9 @@ namespace TJAPlayer3
             if( !TJAPlayer3.stage演奏ドラム画面.bDoublePlay )
             {
                 {
-                    if( TJAPlayer3.Tx.Background_Down != null )
+                    if( TJAPlayer3.Tx.Background_Down[bg] != null )
                     {
-                        TJAPlayer3.Tx.Background_Down.t2D描画( TJAPlayer3.app.Device, 0, 360 );
+                        TJAPlayer3.Tx.Background_Down[bg].t2D描画( TJAPlayer3.app.Device, 0, 360 );
                     }
                 }
                 if(TJAPlayer3.stage演奏ドラム画面.bIsAlreadyCleared[0] && TJAPlayer3.ConfigIni.eGaugeMode != EGaugeMode.Hard && TJAPlayer3.ConfigIni.eGaugeMode != EGaugeMode.ExHard)
@@ -159,6 +160,9 @@ namespace TJAPlayer3
         private CCounter ct下背景スクロール用タイマー1; //下背景パーツ1のX方向スクロール用
         private CCounter ct上背景FIFOタイマー;
         private CCounter[] ct上背景クリアインタイマー;
+        public Random rnd = new Random();
+        public int bg;
+
         //private CTexture tx上背景メイン;
         //private CTexture tx上背景クリアメイン;
         //private CTexture tx下背景メイン;
