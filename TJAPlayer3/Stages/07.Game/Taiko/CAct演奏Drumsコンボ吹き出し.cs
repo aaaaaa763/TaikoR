@@ -27,7 +27,8 @@ namespace TJAPlayer3
 		{
             this.ct進行[ player ] = new CCounter( 1, 103, 20, TJAPlayer3.Timer );
             this.nCombo_渡[ player ] = nCombo;
-		}
+            this.ctcombo = new CCounter(0, 2, 140, TJAPlayer3.Timer);
+        }
 
 		// CActivity 実装
 
@@ -37,6 +38,7 @@ namespace TJAPlayer3
             {
                 this.nCombo_渡[ i ] = 0;
                 this.ct進行[ i ] = new CCounter();
+                this.ctcombo = new CCounter();
             }
 
             base.On活性化();
@@ -80,9 +82,10 @@ namespace TJAPlayer3
                     if( !this.ct進行[ i ].b停止中 )
                     {
                         this.ct進行[ i ].t進行();
-                        if( this.ct進行[ i ].b終了値に達した )
+                        this.ctcombo.t進行();
+                        if (this.ct進行[i].b終了値に達した)
                         {
-                            this.ct進行[ i ].t停止();
+                            this.ct進行[i].t停止();
                         }
                     }
 
@@ -112,16 +115,14 @@ namespace TJAPlayer3
 
                         if( this.ct進行[ i ].b進行中 )
                         {
-                            TJAPlayer3.Tx.Balloon_Combo[ i ].t2D描画( TJAPlayer3.app.Device, TJAPlayer3.Skin.Game_Balloon_Combo_X[ i ], TJAPlayer3.Skin.Game_Balloon_Combo_Y[ i ] );
-                            if( this.nCombo_渡[ i ] < 1000 ) //2016.08.23 kairera0467 仮実装。
+                            TJAPlayer3.Tx.Balloon_Combo[i].t2D描画(TJAPlayer3.app.Device, TJAPlayer3.Skin.Game_Balloon_Combo_X[i], TJAPlayer3.Skin.Game_Balloon_Combo_Y[i], new Rectangle(0, 150 * this.ctcombo.n現在の値, 357, 150));
+                            if (this.nCombo_渡[i] < 1000) //2016.08.23 kairera0467 仮実装。
                             {
-                                this.t小文字表示( TJAPlayer3.Skin.Game_Balloon_Combo_Number_X[ i ], TJAPlayer3.Skin.Game_Balloon_Combo_Number_Y[ i ], string.Format( "{0,4:###0}", this.nCombo_渡[ i ] ) );
-                                TJAPlayer3.Tx.Balloon_Number_Combo.t2D描画( TJAPlayer3.app.Device, TJAPlayer3.Skin.Game_Balloon_Combo_Text_X[ i ], TJAPlayer3.Skin.Game_Balloon_Combo_Text_Y[ i ], new Rectangle( 0, 54, 77, 32 ) );
+                                this.t小文字表示(TJAPlayer3.Skin.Game_Balloon_Combo_Number_X[i], TJAPlayer3.Skin.Game_Balloon_Combo_Number_Y[i], string.Format("{0,4:###0}", this.nCombo_渡[i]));
                             }
                             else
                             {
-                                this.t小文字表示( TJAPlayer3.Skin.Game_Balloon_Combo_Number_Ex_X[ i ], TJAPlayer3.Skin.Game_Balloon_Combo_Number_Ex_Y[ i ], string.Format( "{0,4:###0}", this.nCombo_渡[ i ] ) );
-                                TJAPlayer3.Tx.Balloon_Number_Combo.t2D描画( TJAPlayer3.app.Device, TJAPlayer3.Skin.Game_Balloon_Combo_Text_Ex_X[ i ], TJAPlayer3.Skin.Game_Balloon_Combo_Text_Ex_Y[ i ], new Rectangle( 0, 54, 77, 32 ) );
+                                this.t小文字表示(TJAPlayer3.Skin.Game_Balloon_Combo_Number_Ex_X[i], TJAPlayer3.Skin.Game_Balloon_Combo_Number_Ex_Y[i], string.Format("{0,4:###0}", this.nCombo_渡[i]));
                             }
                         }
                     }
@@ -136,6 +137,7 @@ namespace TJAPlayer3
 		#region [ private ]
 		//-----------------
         private CCounter[] ct進行 = new CCounter[ 2 ];
+        private CCounter ctcombo;
         //private CTexture[] tx吹き出し本体 = new CTexture[ 2 ];
         //private CTexture tx数字;
         private int[] nCombo_渡 = new int[ 2 ];
@@ -153,18 +155,18 @@ namespace TJAPlayer3
         }
         private ST文字位置[] st小文字位置 = new ST文字位置[]{
             new ST文字位置( '0', new Point( 0, 0 ) ),
-            new ST文字位置( '1', new Point( 44, 0 ) ),
-            new ST文字位置( '2', new Point( 88, 0 ) ),
-            new ST文字位置( '3', new Point( 132, 0 ) ),
-            new ST文字位置( '4', new Point( 176, 0 ) ),
-            new ST文字位置( '5', new Point( 220, 0 ) ),
-            new ST文字位置( '6', new Point( 264, 0 ) ),
-            new ST文字位置( '7', new Point( 308, 0 ) ),
-            new ST文字位置( '8', new Point( 352, 0 ) ),
-            new ST文字位置( '9', new Point( 396, 0 ) )
+            new ST文字位置( '1', new Point( 50, 0 ) ),
+            new ST文字位置( '2', new Point( 100, 0 ) ),
+            new ST文字位置( '3', new Point( 150, 0 ) ),
+            new ST文字位置( '4', new Point( 200, 0 ) ),
+            new ST文字位置( '5', new Point( 250, 0 ) ),
+            new ST文字位置( '6', new Point( 300, 0 ) ),
+            new ST文字位置( '7', new Point( 350, 0 ) ),
+            new ST文字位置( '8', new Point( 400, 0 ) ),
+            new ST文字位置( '9', new Point( 450, 0 ) )
         };
 
-		private void t小文字表示( int x, int y, string str )
+        private void t小文字表示( int x, int y, string str )
 		{
 			foreach( char ch in str )
 			{
@@ -172,15 +174,15 @@ namespace TJAPlayer3
 				{
 					if( this.st小文字位置[ i ].ch == ch )
 					{
-						Rectangle rectangle = new Rectangle( this.st小文字位置[ i ].pt.X, this.st小文字位置[ i ].pt.Y, 44, 54 );
+						Rectangle rectangle = new Rectangle( this.st小文字位置[ i ].pt.X, this.st小文字位置[ i ].pt.Y, 50, 65 );
 						if(TJAPlayer3.Tx.Balloon_Number_Combo != null )
 						{
-                            TJAPlayer3.Tx.Balloon_Number_Combo.t2D描画( TJAPlayer3.app.Device, x, y, rectangle );
+                            TJAPlayer3.Tx.Balloon_Number_Combo.t2D描画( TJAPlayer3.app.Device, x - 47, y, rectangle );
 						}
 						break;
 					}
 				}
-                x += 40;
+                x += 42;
 			}
 		}
 		//-----------------

@@ -1644,15 +1644,6 @@ namespace TJAPlayer3
 			tアイテム数の描画();
 			#endregion
 
-            if( this.e曲のバー種別を返す( this.r現在選択中の曲 ) == Eバー種別.Score && CStrジャンルtoNum.ForGenreTextIndex( this.r現在選択中の曲.strジャンル ) != 8 )
-            {
-                if( TJAPlayer3.Tx.SongSelect_GenreText != null )
-                    TJAPlayer3.Tx.SongSelect_GenreText.t2D描画( TJAPlayer3.app.Device, 496, TJAPlayer3.Skin.SongSelect_Overall_Y-64, new Rectangle( 0, 60 * CStrジャンルtoNum.ForGenreTextIndex( this.r現在選択中の曲.strジャンル ), 288, 60 ) );
-            }
-
-
-
-
 			return 0;
 		}
 
