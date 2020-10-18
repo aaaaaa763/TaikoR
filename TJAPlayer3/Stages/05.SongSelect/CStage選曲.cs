@@ -112,7 +112,7 @@ namespace TJAPlayer3
 			base.list子Activities.Add( this.actSortSongs = new CActSortSongs() );
 			base.list子Activities.Add( this.actShowCurrentPosition = new CActSelectShowCurrentPosition() );
 			base.list子Activities.Add( this.actQuickConfig = new CActSelectQuickConfig() );
-			//base.list子Activities.Add( this.act難易度選択画面 = new CActSelect難易度選択画面() );
+			base.list子Activities.Add( this.act難易度選択画面 = new CActSelect難易度選択画面() );
 
 			this.CommandHistory = new CCommandHistory();		// #24063 2011.1.16 yyagi
 		}
@@ -150,7 +150,7 @@ namespace TJAPlayer3
 				for( int i = 0; i < 4; i++ )
 					this.ctキー反復用[ i ] = new CCounter( 0, 0, 0, TJAPlayer3.Timer );
 
-                //this.act難易度選択画面.bIsDifficltSelect = true;
+                this.act難易度選択画面.bIsDifficltSelect = false;
 				base.On活性化();
 
 				this.actステータスパネル.t選択曲が変更された();	// 最大ランクを更新
@@ -210,6 +210,9 @@ namespace TJAPlayer3
                 //this.tx難易度別背景[4] = CDTXMania.tテクスチャの生成( CSkin.Path( @"Graphics\5_background_Edit.png" ) );
                 //this.tx下部テキスト = CDTXMania.tテクスチャの生成( CSkin.Path( @"Graphics\5_footer text.png" ) );
                 this.ct背景スクロール用タイマー = new CCounter(0, TJAPlayer3.Tx.SongSelect_Background.szテクスチャサイズ.Width, 30, TJAPlayer3.Timer);
+				this.n透明度 = new CCounter();
+				this.ctカーソル = new CCounter();
+
 				base.OnManagedリソースの作成();
 			}
 		}
@@ -239,9 +242,12 @@ namespace TJAPlayer3
 			if( !base.b活性化してない )
 			{
 			this.ct背景スクロール用タイマー.t進行Loop();
+				this.n透明度.t進行();
+				this.ctカーソル.t進行();
+
 				#region [ 初めての進行描画 ]
 				//---------------------
-				if( base.b初めての進行描画 )
+				if ( base.b初めての進行描画 )
 				{
 					this.ct登場時アニメ用共通 = new CCounter( 0, 100, 3, TJAPlayer3.Timer );
 					if( TJAPlayer3.r直前のステージ == TJAPlayer3.stage結果 )
@@ -279,9 +285,20 @@ namespace TJAPlayer3
 			            }
 			        }
 			    }
-
-			    //this.actPreimageパネル.On進行描画();
-			//	this.bIsEnumeratingSongs = !this.actPreimageパネル.bIsPlayingPremovie;				// #27060 2011.3.2 yyagi: #PREMOVIE再生中は曲検索を中断する
+				if (n透明度.n現在の値 >= 100)
+				{
+					n透明度制御1 = -100 + n透明度.n現在の値;
+				}
+				else
+				{
+					n透明度制御1 = 0;
+				}
+				if (n透明度.n現在の値 <= 100)
+				{
+					n透明度制御2 = 100 - n透明度.n現在の値;
+				}
+				//this.actPreimageパネル.On進行描画();
+				//	this.bIsEnumeratingSongs = !this.actPreimageパネル.bIsPlayingPremovie;				// #27060 2011.3.2 yyagi: #PREMOVIE再生中は曲検索を中断する
 
 				this.act曲リスト.On進行描画();
 				int y = 0;
@@ -357,13 +374,59 @@ namespace TJAPlayer3
 					this.bBGM再生済み = true;
 				}
 
+				double 回転値 = 180.0;
+				int u;
+				u = (int)(Math.Sin(this.ctカーソル.n現在の値 * Math.PI / (this.ctカーソル.n終了値 * 180.0 / 回転値)) * 20);
 
-//Debug.WriteLine( "パンくず=" + this.r現在選択中の曲.strBreadcrumbs );
-                if( this.ctDiffSelect移動待ち != null )
+				//Debug.WriteLine( "パンくず=" + this.r現在選択中の曲.strBreadcrumbs );
+				if ( this.ctDiffSelect移動待ち != null )
                     this.ctDiffSelect移動待ち.t進行();
 
+				if (this.act難易度選択画面.bIsDifficltSelect)
+				{
+					#region 背景
+					TJAPlayer3.Tx.SongSelect_Frame_Score2.Opacity = ((this.n透明度制御1 * 0xff) / 100);
+					TJAPlayer3.Tx.SongSelect_Frame_Score3.Opacity = ((this.n透明度制御1 * 0xff) / 100);
+					TJAPlayer3.Tx.SongSelect_Score_Select.Opacity = ((this.n透明度制御1 * 0xff) / 100);
+					TJAPlayer3.Tx.SongSelect_Level2.Opacity = ((this.n透明度制御1 * 0xff) / 100);
+					var genreBack = TJAPlayer3.Tx.SongSelect_ND_Genre[CStrジャンルtoNum.ForGenreBackIndex(this.r現在選択中の曲.strジャンル)];
+					if (genreBack != null)
+					{
+						genreBack.Opacity = ((this.n透明度制御1 * 0xff) / 100);
+
+						genreBack.t2D描画(TJAPlayer3.app.Device, 0, 0);
+					}
+					#endregion
+					if (this.act難易度選択画面.n現在の選択行 >= 0)
+						TJAPlayer3.Tx.SongSelect_Score_Select?.t2D下中央基準描画(TJAPlayer3.app.Device, 497 + (this.act難易度選択画面.n現在の選択行 * 143), TJAPlayer3.Skin.SongSelect_Overall_Y + 395, new Rectangle(0, 90, 171, 264));
+					//
+					TJAPlayer3.Tx.SongSelect_Frame_Score2.t2D描画(TJAPlayer3.app.Device, 0, 0);
+					TJAPlayer3.Tx.SongSelect_Frame_Score3.t2D描画(TJAPlayer3.app.Device, 0, 0);
+
+					#region 星
+					if (TJAPlayer3.stage選曲.n現在選択中の曲の難易度 != (int)Difficulty.Tower && TJAPlayer3.stage選曲.n現在選択中の曲の難易度 != (int)Difficulty.Dan)
+					{
+						for (int i = 0; i < (int)Difficulty.Edit + 1; i++)
+						{
+							for (int n = 0; n < TJAPlayer3.stage選曲.r現在選択中のスコア.譜面情報.nレベル[i]; n++)
+							{
+								if (i != 4)
+								{
+									TJAPlayer3.Tx.SongSelect_Level2.t2D下中央基準描画(TJAPlayer3.app.Device, 507 + (i * 144), TJAPlayer3.Skin.SongSelect_Overall_Y + 333, new Rectangle(26 * TJAPlayer3.stage選曲.r現在選択中のスコア.譜面情報.nレベル[i], 0, 26, 21));
+								}
+							}
+						}
+					}
+					#endregion
+
+					if (this.act難易度選択画面.n現在の選択行 >= 0)
+						TJAPlayer3.Tx.SongSelect_Score_Select?.t2D下中央基準描画(TJAPlayer3.app.Device, 494 + (this.act難易度選択画面.n現在の選択行 * 144), TJAPlayer3.Skin.SongSelect_Overall_Y + 169 + u, new Rectangle(0, 0, 171, 90));
+					else
+						TJAPlayer3.Tx.SongSelect_Score_Select?.t2D下中央基準描画(TJAPlayer3.app.Device, 469 + (this.act難易度選択画面.n現在の選択行 * 89), TJAPlayer3.Skin.SongSelect_Overall_Y + 169 + u, new Rectangle(0, 0, 171, 90));
+
+				}
 				// キー入力
-				if( base.eフェーズID == CStage.Eフェーズ.共通_通常状態 )
+				if ( base.eフェーズID == CStage.Eフェーズ.共通_通常状態 )
 				{
 					#region [ 簡易CONFIGでMore、またはShift+F1: 詳細CONFIG呼び出し ]
 					if (  actQuickConfig.bGotoDetailConfig )
@@ -377,7 +440,7 @@ namespace TJAPlayer3
 						return 0;
 					}
 					#endregion
-					if ( !this.actSortSongs.bIsActivePopupMenu && !this.actQuickConfig.bIsActivePopupMenu /*&&  !this.act難易度選択画面.bIsDifficltSelect */ )
+					if ( !this.actSortSongs.bIsActivePopupMenu && !this.actQuickConfig.bIsActivePopupMenu &&  !this.act難易度選択画面.bIsDifficltSelect )
 					{
                         #region [ ESC ]
                         if (TJAPlayer3.Input管理.Keyboard.bキーが押された((int)SlimDX.DirectInput.Key.Escape) && (this.act曲リスト.r現在選択中の曲 != null))// && (  ) ) )
@@ -494,14 +557,14 @@ namespace TJAPlayer3
                                     switch (this.act曲リスト.r現在選択中の曲.eノード種別)
                                     {
                                         case C曲リストノード.Eノード種別.SCORE:
-                                            if (TJAPlayer3.Skin.sound曲決定音.b読み込み成功)
-                                                TJAPlayer3.Skin.sound曲決定音.t再生する();
-                                            else
-                                                TJAPlayer3.Skin.sound決定音.t再生する();
-
-                                            this.t曲を選択する();
-                                            break;
-                                        case C曲リストノード.Eノード種別.BOX:
+											{
+												TJAPlayer3.Skin.sound決定音.t再生する();
+												this.n透明度 = new CCounter(0, 200, 2.5, TJAPlayer3.Timer);
+												this.ctカーソル = new CCounter(0, 163, 1, TJAPlayer3.Timer);
+												this.act難易度選択画面.bIsDifficltSelect = true;
+											}
+											break;
+										case C曲リストノード.Eノード種別.BOX:
                                             {
                                                 TJAPlayer3.Skin.sound決定音.t再生する();
                                                 bool bNeedChangeSkin = this.act曲リスト.tBOXに入る();
@@ -614,9 +677,82 @@ namespace TJAPlayer3
 							#endregion
 						}
 					}
+					else if (!this.actSortSongs.bIsActivePopupMenu && !this.actQuickConfig.bIsActivePopupMenu && TJAPlayer3.stage選曲.n現在選択中の曲の難易度 != (int)Difficulty.Dan)
+					{
+						#region 難易度選択画面
+						if (TJAPlayer3.Pad.b押された(E楽器パート.DRUMS, Eパッド.RBlue))
+						{
+							this.act難易度選択画面.t次に移動();
+							this.ctカーソル = new CCounter(0, 163, 1, TJAPlayer3.Timer);
+							TJAPlayer3.Skin.sound変更音.t再生する();
+						}
+						else if (TJAPlayer3.Pad.b押された(E楽器パート.DRUMS, Eパッド.LBlue))
+						{
+							this.act難易度選択画面.t前に移動();
+							this.ctカーソル = new CCounter(0, 163, 1, TJAPlayer3.Timer);
+							TJAPlayer3.Skin.sound変更音.t再生する();
+						}
+						else if (TJAPlayer3.Pad.b押されたDGB(Eパッド.Decide) || (TJAPlayer3.ConfigIni.bEnterがキー割り当てのどこにも使用されていない && TJAPlayer3.Input管理.Keyboard.bキーが押された((int)SlimDX.DirectInput.Key.Return)) || (TJAPlayer3.Pad.b押されたDGB(Eパッド.LRed) || TJAPlayer3.Pad.b押されたDGB(Eパッド.RRed)))
+						{
+							if (this.act難易度選択画面.n現在の選択行 >= 0)
+							{
+								if (TJAPlayer3.stage選曲.r現在選択中のスコア.譜面情報.nレベル[this.act難易度選択画面.n現在の選択行] >= 0)
+								{
+									TJAPlayer3.Skin.sound曲決定音.t再生する();
+									TJAPlayer3.stage選曲.t曲を選択する(this.act難易度選択画面.n現在の選択行);
+								}
+							}
+							else if (this.act難易度選択画面.n現在の選択行 == -1)
+							{
+								TJAPlayer3.Skin.sound決定音.t再生する();
+								this.actQuickConfig.tActivatePopupMenu(E楽器パート.TAIKO);
+							}
+							else if (this.act難易度選択画面.n現在の選択行 == -2)
+							{
+								this.n透明度 = new CCounter(0, 0, 3, TJAPlayer3.Timer);
+								this.act曲リスト.tenkai = new CCounter(0, 153, 2.5, TJAPlayer3.Timer);
+								TJAPlayer3.stage選曲.t難易度選択画面から戻る();
+							}
 
-				    #region [ [ & ] Sound Group Level ]
-				    KeyboardSoundGroupLevelControlHandler.Handle(
+						}
+                        /*	else if (!this.actSortSongs.bIsActivePopupMenu && !this.actQuickConfig.bIsActivePopupMenu)
+							{
+								if (TJAPlayer3.Pad.b押された(E楽器パート.DRUMS, Eパッド.RBlue))
+								{
+									this.act難易度選択画面.t次に移動2();
+									TJAPlayer3.Skin.sound変更音.t再生する();
+								}
+								else if (TJAPlayer3.Pad.b押された(E楽器パート.DRUMS, Eパッド.LBlue))
+								{
+									this.act難易度選択画面.t前に移動2();
+									TJAPlayer3.Skin.sound変更音.t再生する();
+								}
+								else if (TJAPlayer3.Pad.b押されたDGB(Eパッド.Decide) || (TJAPlayer3.ConfigIni.bEnterがキー割り当てのどこにも使用されていない && TJAPlayer3.Input管理.Keyboard.bキーが押された((int)SlimDX.DirectInput.Key.Return)) || (TJAPlayer3.Pad.b押されたDGB(Eパッド.LRed) || TJAPlayer3.Pad.b押されたDGB(Eパッド.RRed)))
+								{
+									if (this.act難易度選択画面.n現在の選択行2 == 1)
+									{
+										TJAPlayer3.stage選曲.t難易度選択画面から戻る();
+										ct難易度選択用 = new CCounter(0, 0, 3, TJAPlayer3.Timer);
+									}
+									else if (this.act難易度選択画面.n現在の選択行2 == -1)
+									{
+										TJAPlayer3.Skin.sound決定音.t再生する();
+										this.actQuickConfig.tActivatePopupMenu(E楽器パート.TAIKO);
+									}
+									else if (this.act難易度選択画面.n現在の選択行2 == 0)
+									{
+										TJAPlayer3.Skin.sound曲決定音.t再生する();
+										TJAPlayer3.stage選曲.t曲を選択する();
+									}
+
+								}
+							}
+
+							*/
+                        #endregion
+                    }
+                    #region [ [ & ] Sound Group Level ]
+                    KeyboardSoundGroupLevelControlHandler.Handle(
 				        TJAPlayer3.Input管理.Keyboard, TJAPlayer3.SoundGroupLevelController, TJAPlayer3.Skin, true);
 				    #endregion
 
@@ -752,7 +888,11 @@ namespace TJAPlayer3
 		public CActSelect曲リスト act曲リスト;
 		private CActSelectShowCurrentPosition actShowCurrentPosition;
         private CActSelect難易度選択画面 act難易度選択画面;
+		public CCounter n透明度;
+		public CCounter ctカーソル;
 
+		public int n透明度制御1;
+		public int n透明度制御2;
 		public CActSortSongs actSortSongs;
 		private CActSelectQuickConfig actQuickConfig;
 
@@ -770,7 +910,11 @@ namespace TJAPlayer3
   //      private CTexture tx難易度名;
   //      private CTexture tx下部テキスト;
         private CCounter ctDiffSelect移動待ち;
-
+		public void t難易度選択画面から戻る()
+		{
+			TJAPlayer3.Skin.sound取消音.t再生する();
+			this.act難易度選択画面.bIsDifficltSelect = false;
+		}
 		private struct STCommandTime		// #24063 2011.1.16 yyagi コマンド入力時刻の記録用
 		{
 			public E楽器パート eInst;		// 使用楽器
