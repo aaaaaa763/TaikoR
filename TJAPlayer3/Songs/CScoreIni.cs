@@ -210,7 +210,7 @@ namespace TJAPlayer3
             public int[] n不可 = new int[(int)Difficulty.Total];
             public int[] n連打 = new int[(int)Difficulty.Total];
             public int[] nハイスコア = new int[(int)Difficulty.Total];
-            public Dan_C[] Dan_C;
+			public Dan_C[] Dan_C;
 
 			public C演奏記録()
 			{
